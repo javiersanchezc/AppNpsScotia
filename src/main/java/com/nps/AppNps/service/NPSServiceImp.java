@@ -1,0 +1,19 @@
+package com.nps.AppNps.service;
+
+import com.nps.AppNps.loadProces.CSV;
+import org.springframework.stereotype.Service;
+
+@Service
+public class NPSServiceImp implements INPSService {
+    public void Load_scotiabank_enps_responses_cx_level(String inputFilePath, String outputFilePath) {
+        String headerFileout = "SURVEY_ID,SURVEY_METHOD,EMP_BUSINESS_LINE_CD,SURVEY_WAVE,SURVEY_SENT_DATE,Country,BRANCH_DISTRICT_ID,BRANCH_REGION_ID,CC_SITE_ID,ENGAGEMENT_SCORE,ENGAGEMENT_COMMENT,TRANSLATION_ENGAGEMENT_COMMENT,LTR_SCORE,LTR_COMMENT,TRANSLATION_LTR_COMMENT,BETTER_SERVE_CUSTOMER_CLIENT_COMMENT,TRANSLATION_BETTER_SERVE_CUSTOMER_CLIENT_COMMENT,DELIVER_GOOD_CUSTOMER_CLIENT_EXPERIENCE_SCORE,DELIVER_GOOD_CUSTOMER_CLIENT_EXPERIENCE_COMMENT,TRANSLATION_DELIVER_GOOD_CUSTOMER_CLIENT_EXPERIENCE_COMMENT,COMMUNICATION_SCORE,PROCESSES_SCORE,RESOURCES_SCORE,SYSTEMS_SCORE,RETAIL_ENABLERS_COMMENT_n1,RETAIL_ENABLERS_COMMENT_n2,TRANSLATION_RETAIL_ENABLERS_COMMENT,TRAINING_TOOLS_RESOURCES_SCORE,COMPETITIVE_COMMERCIAL_COMMENT,TRANSLATION_COMPETITIVE_COMMERCIAL_COMMENT,JOB_CODE,JOB_TITLE,CUSTOMER_INTEGRATION,ask_now_question_1_wording,ask_now_question_1,ask_now_question_2_wording,ask_now_question_2,ask_now_question_3_wording,ask_now_question_3,ask_now_question_4_wording,ask_now_question_4,ask_now_question_5_wording,ask_now_question_5,Retail_Enablers_Comment_n1_Effectively_Communication,Retail_Enablers_Comment_n2_Policy_and_Procedures,Retail_Enablers_Comment_n3_Resources_and_Information,Retail_Enablers_Comment_n4_System_and_Technology,Overall_satisfaction_Help_Desk_ServiceNOW,Easy_to_contact_Help_Desk_ServiceNOW,Quality_of_response_Help_Desk_ServiceNOW,Response_time_Help_Desk_ServiceNOW,Why_Canada_Branch_Help_Desk_ServiceNOW,Overall_satisfaction_Ask_Operations,Easy_to_contact_Ask_Operations,Quality_of_response_Ask_Operations,Response_time_Ask_Operations,Why_Canada_Branch_Ask_Operations,Overall_satisfaction_ASE,Easy_to_contact_ASE,Quality_of_response_ASE,Response_time_ASE,Why_Canada_Branch_Advice_Service_Effectiveness_ASE,Overall_satisfaction_RBSC,Easy_to_contact_RBSC,Quality_of_response_RBSC,Response_time_RBSC,Why_Canada_Branch_RBSC,Overall_satisfaction_Pool_Telefonico,Easy_to_contact_Pool_Telefonico,Quality_of_response_Pool_Telefonico,Response_time_Pool_Telefonico,Why_Mexico_Branch_Pool_telef";
+        CSV csvTransformer = new CSV(inputFilePath, outputFilePath, headerFileout);
+        csvTransformer.transformCsv();
+    }
+
+    public void Load_scotiabank_enps_responses_team_level(String inputFilePath, String outputFilePath) {
+        String headerFileout = "";
+        CSV csvTransformer = new CSV(inputFilePath, outputFilePath, headerFileout);
+        csvTransformer.transformCsv();
+    }
+}
