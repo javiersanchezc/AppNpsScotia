@@ -13,4 +13,10 @@ public class HuddlesServiceimpl implements IHuddlesService {
         CsvToSqlServerHuddlesExport CsvToSqlServerHuddlesExport = new CsvToSqlServerHuddlesExport();
         CsvToSqlServerHuddlesExport.convertCsvToSqlServer();
     }
+
+    @Override
+    public void loadMasive() {
+        CsvToSqlServerHuddlesExport CsvToSqlServerHuddlesExport = new CsvToSqlServerHuddlesExport();
+        CsvToSqlServerHuddlesExport.convertCsvToSqlServer();
+    }
 }

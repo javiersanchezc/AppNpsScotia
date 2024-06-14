@@ -13,4 +13,12 @@ public class OptOutServiceimpl implements IOptOutService {
         CsvToSqlServerOptOutExport CsvToSqlServerOptOutExport = new CsvToSqlServerOptOutExport();
         CsvToSqlServerOptOutExport.convertCsvToSqlServer();
     }
+
+    @Override
+    public void loadMasive() {
+        CsvToSqlServerOptOutExport CsvToSqlServerOptOutExport = new CsvToSqlServerOptOutExport();
+        CsvToSqlServerOptOutExport.convertCsvToSqlServer();
+    }
+
+
 }

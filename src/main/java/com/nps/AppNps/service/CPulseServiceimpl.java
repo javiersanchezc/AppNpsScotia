@@ -26,6 +26,18 @@ public class CPulseServiceimpl implements ICPulseService {
         CPulseInvitationsExport.convertCsvToSqlServer();
     }
 
+    @Override
+    public void loadMasive() {
+        CsvToSqlServerCPulseResponseExport CPulse_Response_Export = new CsvToSqlServerCPulseResponseExport();
+        CPulse_Response_Export.convertCsvToSqlServer();
+
+        CsvToSqlServerCPulseInvitationsExport CPulseInvitationsExport = new CsvToSqlServerCPulseInvitationsExport();
+        CPulseInvitationsExport.convertCsvToSqlServer();
+
+        CsvToSqlServerCPulseCallBacksExport CPulseCallBacksExport = new CsvToSqlServerCPulseCallBacksExport();
+        CPulseCallBacksExport.convertCsvToSqlServer();
+    }
+
     public void Load_cPulse_Callback_Export(String inputFilePath, String outputFilePath) {
         String headerFileout = "";
         CSV csvTransformer = new CSV(inputFilePath, outputFilePath, headerFileout);

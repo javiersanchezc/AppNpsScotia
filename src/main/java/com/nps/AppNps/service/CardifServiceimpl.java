@@ -37,4 +37,20 @@ public class CardifServiceimpl implements ICardifService {
         CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport CardifResponsesExport = new CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport();
         CardifResponsesExport.convertCsvToSqlServer();
     }
+
+    @Override
+    public void loadMasive() {
+        CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport CardifResponsesExport = new CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport();
+        CardifResponsesExport.convertCsvToSqlServer();
+
+        CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport CardifCallbackExport = new CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport();
+        CardifCallbackExport.convertCsvToSqlServer();
+
+        CsvToSqlServerCsvToSqlServercPulseCardifInvitationExport CardifInvitationExport = new CsvToSqlServerCsvToSqlServercPulseCardifInvitationExport();
+        CardifInvitationExport.convertCsvToSqlServer();
+
+        CsvToSqlServerCsvToSqlServercPulseCardiffOptOutExport CardiffOptOutExport = new CsvToSqlServerCsvToSqlServercPulseCardiffOptOutExport();
+        CardiffOptOutExport.convertCsvToSqlServer();
+
+    }
 }

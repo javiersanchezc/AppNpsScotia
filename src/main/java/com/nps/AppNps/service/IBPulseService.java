@@ -8,4 +8,6 @@ public interface IBPulseService {
     void Load_scotiabank_b2b_callback(String paramString1, String paramString2);
 
     void Load_bPulseResponseExport(String paramString1, String paramString2);
+
+    void loadMasive();
 }

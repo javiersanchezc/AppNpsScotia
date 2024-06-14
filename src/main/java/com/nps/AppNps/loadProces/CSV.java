@@ -1,6 +1,8 @@
 package com.nps.AppNps.loadProces;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,6 +33,7 @@ public class CSV {
             System.out.println("Transformation completed. Result written to: " + this.outputFilePath);
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("----------------"+e);
         }
     }
 

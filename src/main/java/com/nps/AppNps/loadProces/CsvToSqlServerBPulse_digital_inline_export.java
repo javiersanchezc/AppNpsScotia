@@ -1,17 +1,20 @@
 package com.nps.AppNps.loadProces;
 
+import com.nps.AppNps.Data.ConsultaResultado;
 import com.opencsv.CSVReader;
-import java.io.BufferedWriter;
+import org.springframework.stereotype.Component;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+@Component
 public class CsvToSqlServerBPulse_digital_inline_export {
     private String jdbcUrl;
 
@@ -123,6 +126,28 @@ public class CsvToSqlServerBPulse_digital_inline_export {
 
     private boolean isLastFieldNull(String[] row) {
         return (row[row.length - 1] == null);
+    }
+
+    public List<ConsultaResultado> realizarConsultas(LocalDate fechaConsulta) {
+        List<ConsultaResultado> resultados = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(jdbcUrl)) {
+            resultados.add(consultarTabla(connection, tableNamebPulse_digital_inline_export, fechaConsulta));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultados;
+    }
+
+    private ConsultaResultado consultarTabla(Connection connection, String tableName, LocalDate fechaConsulta) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE Interaction_Date = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setDate(1, java.sql.Date.valueOf(fechaConsulta));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                resultSet.next();
+                long cantidadDatos = resultSet.getLong(1);
+                return new ConsultaResultado(LocalDateTime.now(), tableName, cantidadDatos);
+            }
+        }
     }
 }
 
