@@ -26,6 +26,7 @@ public class CsvToSqlServerOptOutExport {
     private String tableNameOptout_Export;
 
     private String errorFilePath;
+    private String logFilename ="OptOutExport.log";
 
     public CsvToSqlServerOptOutExport() {
         loadProperties();
@@ -141,7 +142,7 @@ public class CsvToSqlServerOptOutExport {
 
     private void logErrorRecord(String[] values) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.errorFilePath, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
             try {
                 for (String value : values)
                     writer.write(value + ",");

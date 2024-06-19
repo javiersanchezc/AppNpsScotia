@@ -26,6 +26,7 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport {
     private String tableNamecPulseInsuranceCardifResponsesExport;
 
     private String errorFilePath;
+    private String logFilename ="cPulseCardifResponsesExport.log";
 
     public CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport() {
         loadProperties();
@@ -142,7 +143,7 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifResponsesExport {
 
     private void logErrorRecord(String[] values) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.errorFilePath, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
             try {
                 for (String value : values)
                     writer.write(value + ",");

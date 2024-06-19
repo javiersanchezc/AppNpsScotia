@@ -1,18 +1,26 @@
 package com.nps.AppNps.bach;
 
+import com.nps.AppNps.service.ITrasformfiles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.stream.Stream;
 
+@Component
 public class FileProcessorThread extends Thread {
     private final String inputDirectory;
-    private final String processingDirectory;
     private final String processedDirectory;
+    private final ITrasformfiles trasformService;
+    private final DataLoader dataLoader;
 
-    public FileProcessorThread(String inputDirectory, String processingDirectory, String processedDirectory) {
-        this.inputDirectory = inputDirectory;
-        this.processingDirectory = processingDirectory;
-        this.processedDirectory = processedDirectory;
+    @Autowired
+    public FileProcessorThread(ITrasformfiles trasformService, DataLoader dataLoader) {
+        this.inputDirectory = "C:/data";
+        this.processedDirectory = "C:/data/bkdestino";
+        this.trasformService = trasformService;
+        this.dataLoader = dataLoader;
     }
 
     @Override
@@ -30,60 +38,50 @@ public class FileProcessorThread extends Thread {
         }
     }
 
-    private void processFile(Path sourcePath) {
+    private void processFile(Path filePath) {
         try {
-            Path processingPath = Paths.get(processingDirectory, sourcePath.getFileName().toString());
-            Path processedPath = Paths.get(processedDirectory, sourcePath.getFileName().toString());
+            // Transform the file
+            transformFile(filePath);
 
-            // Move file to processing directory
-            Files.move(sourcePath, processingPath, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Moved file to processing: " + processingPath);
-
-            // Transform the file (dummy transformation here)
-            transformFile(processingPath);
-
-            // Upload file to database (dummy upload here)
-            uploadFileToDatabase(processingPath);
+            // Upload file to database
+            uploadFileToDatabase();
 
             // Move file to processed directory
-            Files.move(processingPath, processedPath, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Moved file to processed: " + processedPath);
+            moveFileToProcessedDirectory(filePath);
 
-            // Mark file as updated (this can be done by renaming or adding a log entry)
-            markFileAsUpdated(processedPath);
-
-            // Optionally, delete the original file from the input directory (although it was already moved)
-            if (Files.exists(sourcePath)) {
-                Files.delete(sourcePath);
-                System.out.println("Deleted original file from input directory: " + sourcePath);
-            }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void transformFile(Path filePath) {
-        // Implement your transformation logic here
-        System.out.println("Transforming file: " + filePath);
+        // Call the transformation service
+        try {
+            trasformService.getFiles(filePath.getFileName().toString());
+            System.out.println("Transformed file: " + filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void uploadFileToDatabase(Path filePath) {
-        // Implement your database upload logic here
-        System.out.println("Uploading file to database: " + filePath);
+    private void uploadFileToDatabase() {
+        // Call the data loader service
+        try {
+            dataLoader.loadAllData();
+            System.out.println("Uploaded data to database.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void markFileAsUpdated(Path filePath) {
-        // Implement your logic to mark the file as updated
-        System.out.println("File marked as updated: " + filePath);
-    }
-
-    public static void main(String[] args) {
-        String inputDirectory = "C:/data";
-        String processingDirectory = "C:/data/destino";
-        String processedDirectory = "C:/data/bkdestino";
-
-        FileProcessorThread fileProcessorThread = new FileProcessorThread(inputDirectory, processingDirectory, processedDirectory);
-        fileProcessorThread.start();
+    private void moveFileToProcessedDirectory(Path filePath) {
+        // Move file to processed directory
+        try {
+            Path processedFilePath = Paths.get(processedDirectory, filePath.getFileName().toString());
+            Files.move(filePath, processedFilePath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Moved file to processed directory: " + processedFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
-

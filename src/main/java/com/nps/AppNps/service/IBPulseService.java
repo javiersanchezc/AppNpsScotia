@@ -10,4 +10,5 @@ public interface IBPulseService {
     void Load_bPulseResponseExport(String paramString1, String paramString2);
 
     void loadMasive();
+    void loadMasivebach();
 }

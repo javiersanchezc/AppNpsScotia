@@ -24,7 +24,8 @@ public class CsvToSqlServerWPulseInvitationsExport {
 
     private String tableNamewPulse_Invitation_Export;
 
-    private String errorFilePath;
+    //private String errorFilePath;
+   private String logFilename ="WPulseInvitationsExport.log";
 
     public CsvToSqlServerWPulseInvitationsExport() {
         loadProperties();
@@ -45,7 +46,7 @@ public class CsvToSqlServerWPulseInvitationsExport {
                 this.inputFilePathwm_wm_invitations = properties.getProperty("inputFilePathwm_wm_invitations");
                 this.tableNamewPulse_Invitation_Export = properties.getProperty("tableNamewPulse_Invitation_Export");
                 this.jdbcUrl = properties.getProperty("jdbcUrl");
-                this.errorFilePath = properties.getProperty("errorFilePath");
+              //  this.errorFilePath = properties.getProperty("errorFilePath");
                 if (input != null)
                     input.close();
             } catch (Throwable throwable) {
@@ -140,7 +141,7 @@ public class CsvToSqlServerWPulseInvitationsExport {
 
     private void logErrorRecord(String[] values) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.errorFilePath, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
             try {
                 for (String value : values)
                     writer.write(value + ",");

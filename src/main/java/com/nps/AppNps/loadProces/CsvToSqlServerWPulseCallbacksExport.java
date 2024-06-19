@@ -25,7 +25,7 @@ public class CsvToSqlServerWPulseCallbacksExport {
     private String tableNamewPulse_Callbacks;
 
     private String errorFilePath;
-
+    private String logFilename ="WPulseCallbacksExport.log";
     public CsvToSqlServerWPulseCallbacksExport() {
         loadProperties();
     }
@@ -139,7 +139,7 @@ public class CsvToSqlServerWPulseCallbacksExport {
 
     private void logErrorRecord(String[] values) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.errorFilePath, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
             try {
                 for (String value : values)
                     writer.write(value + ",");

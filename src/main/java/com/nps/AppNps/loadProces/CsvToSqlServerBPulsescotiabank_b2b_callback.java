@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
 @Component
 public class CsvToSqlServerBPulsescotiabank_b2b_callback {
     private String jdbcUrl;
@@ -24,6 +25,8 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
     private String inputFilePathwm_scotiabank_b2b_callback;
 
     private String tableNamescotiabank_b2b_callback;
+
+    private String logFilename = "BPulsescotiabank_b2b_callback.log";
 
     public CsvToSqlServerBPulsescotiabank_b2b_callback() {
         loadProperties();
@@ -33,28 +36,15 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
         Properties properties = new Properties();
         try {
             InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties");
-            try {
-                if (input == null) {
-                    System.err.println("No se pudo encontrar el archivo de propiedades.");
-                    if (input != null)
-                        input.close();
-                    return;
-                }
-                properties.load(input);
-                this.inputFilePathwm_scotiabank_b2b_callback = properties.getProperty("inputFilePathwm_scotiabank_b2b_callback");
-                this.tableNamescotiabank_b2b_callback = properties.getProperty("tableNamescotiabank_b2b_callback");
-                this.jdbcUrl = properties.getProperty("jdbcUrl");
-                if (input != null)
-                    input.close();
-            } catch (Throwable throwable) {
-                if (input != null)
-                    try {
-                        input.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                throw throwable;
+            if (input == null) {
+                System.err.println("No se pudo encontrar el archivo de propiedades.");
+                return;
             }
+            properties.load(input);
+            this.inputFilePathwm_scotiabank_b2b_callback = properties.getProperty("inputFilePathwm_scotiabank_b2b_callback");
+            this.tableNamescotiabank_b2b_callback = properties.getProperty("tableNamescotiabank_b2b_callback");
+            this.jdbcUrl = properties.getProperty("jdbcUrl");
+            input.close();
         } catch (Exception e) {
             System.err.println("Error al leer el archivo de propiedades: " + e.getMessage());
             e.printStackTrace();
@@ -64,59 +54,46 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
     public void convertCsvToSqlServer() {
         try {
             Connection connection = DriverManager.getConnection(this.jdbcUrl);
-            try {
-                CSVReader csvReader = new CSVReader(new FileReader(this.inputFilePathwm_scotiabank_b2b_callback));
-                try {
-                    String[] headers = csvReader.readNext();
-                    String insertionSql = buildInsertionSql(headers);
-                    PreparedStatement preparedStatement = connection.prepareStatement(insertionSql);
-                    try {
-                        String[] row;
-                        while ((row = csvReader.readNext()) != null) {
-                            if (!isNumeric(row[0])) {
-                                System.out.println("Skipping line with non-numeric first column: " + Arrays.toString((Object[])row));
-                                continue;
-                            }
-                            setParameters(preparedStatement, row, headers.length);
-                            preparedStatement.executeUpdate();
-                        }
-                        System.out.println("Data successfully loaded into SQL Server.");
-                        if (preparedStatement != null)
-                            preparedStatement.close();
-                    } catch (Throwable throwable) {
-                        if (preparedStatement != null)
-                            try {
-                                preparedStatement.close();
-                            } catch (Throwable throwable1) {
-                                throwable.addSuppressed(throwable1);
-                            }
-                        throw throwable;
-                    }
-                    csvReader.close();
-                } catch (Throwable throwable) {
-                    try {
-                        csvReader.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                    throw throwable;
+            CSVReader csvReader = new CSVReader(new FileReader(this.inputFilePathwm_scotiabank_b2b_callback));
+            String[] headers = csvReader.readNext();
+            String insertionSql = buildInsertionSql(headers);
+            PreparedStatement preparedStatement = connection.prepareStatement(insertionSql);
+            String[] row;
+            while ((row = csvReader.readNext()) != null) {
+                if (!isNumeric(row[0])) {
+                    System.out.println("Skipping line with non-numeric first column: " + Arrays.toString(row));
+                    logErrorRecord(row);
+                    continue;
                 }
-                if (connection != null)
-                    connection.close();
-            } catch (Throwable throwable) {
-                if (connection != null)
-                    try {
-                        connection.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                throw throwable;
+                setParameters(preparedStatement, row, headers.length);
+                try {
+                    preparedStatement.executeUpdate();
+                } catch (SQLException e) {
+                    logErrorRecord(row);
+                }
             }
+            System.out.println("Data successfully loaded into SQL Server.");
+            preparedStatement.close();
+            csvReader.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (FileNotFoundException error) {
-            error.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logErrorRecord(String[] values) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true))) {
+            for (String value : values) {
+                writer.write(value + ",");
+            }
+            writer.newLine();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -131,11 +108,12 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
     }
 
     private String buildInsertionSql(String[] headers) {
-        String sql = "INSERT INTO " + this.tableNamescotiabank_b2b_callback + " VALUES (";
-        for (int i = 0; i < headers.length; i++)
-            sql = sql + ((i == 0) ? "?" : ", ?");
-        sql = sql + ")";
-        return sql;
+        StringBuilder sql = new StringBuilder("INSERT INTO " + this.tableNamescotiabank_b2b_callback + " VALUES (");
+        for (int i = 0; i < headers.length; i++) {
+            sql.append((i == 0) ? "?" : ", ?");
+        }
+        sql.append(")");
+        return sql.toString();
     }
 
     private void setParameters(PreparedStatement preparedStatement, String[] values, int expectedLength) throws SQLException {
@@ -143,7 +121,7 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
             if (i < values.length) {
                 preparedStatement.setString(i + 1, values[i]);
             } else {
-                preparedStatement.setNull(i + 1, 12);
+                preparedStatement.setNull(i + 1, Types.VARCHAR);
             }
         }
     }
@@ -170,4 +148,3 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
         }
     }
 }
-

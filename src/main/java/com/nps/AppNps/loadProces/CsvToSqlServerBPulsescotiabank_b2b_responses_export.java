@@ -27,6 +27,7 @@ public class CsvToSqlServerBPulsescotiabank_b2b_responses_export {
     private String tableNamebPulse_bPulse_Response_Export;
 
     private String errorFilePath;
+    private String logFilename ="BPulsescotiabank_b2b_responses_export.log";
 
     public CsvToSqlServerBPulsescotiabank_b2b_responses_export() {
         loadProperties();
@@ -171,7 +172,7 @@ public class CsvToSqlServerBPulsescotiabank_b2b_responses_export {
 
     private void logErrorRecord(String[] values) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.errorFilePath, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
             try {
                 for (String value : values)
                     writer.write(value + ",");

@@ -1,20 +1,17 @@
 package com.nps.AppNps.loadProces;
+
 import com.nps.AppNps.Data.ConsultaResultado;
 import com.opencsv.CSVReader;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 @Component
 public class CsvToSqlServerBPulse_Invitation_Export {
     private String jdbcUrl;
@@ -22,6 +19,8 @@ public class CsvToSqlServerBPulse_Invitation_Export {
     private String inputFilePathwm_bPulse_Invitation_Export;
 
     private String tableNamebPulse_bPulse_Invitation_Export;
+
+    private String logFilename = "BPulse_Invitation_Export.log";
 
     public CsvToSqlServerBPulse_Invitation_Export() {
         loadProperties();
@@ -31,28 +30,15 @@ public class CsvToSqlServerBPulse_Invitation_Export {
         Properties properties = new Properties();
         try {
             InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties");
-            try {
-                if (input == null) {
-                    System.err.println("No se pudo encontrar el archivo de propiedades.");
-                    if (input != null)
-                        input.close();
-                    return;
-                }
-                properties.load(input);
-                this.inputFilePathwm_bPulse_Invitation_Export = properties.getProperty("inputFilePathwm_bPulse_Invitation_Export");
-                this.tableNamebPulse_bPulse_Invitation_Export = properties.getProperty("tableNamebPulse_bPulse_Invitation_Export");
-                this.jdbcUrl = properties.getProperty("jdbcUrl");
-                if (input != null)
-                    input.close();
-            } catch (Throwable throwable) {
-                if (input != null)
-                    try {
-                        input.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                throw throwable;
+            if (input == null) {
+                System.err.println("No se pudo encontrar el archivo de propiedades.");
+                return;
             }
+            properties.load(input);
+            this.inputFilePathwm_bPulse_Invitation_Export = properties.getProperty("inputFilePathwm_bPulse_Invitation_Export");
+            this.tableNamebPulse_bPulse_Invitation_Export = properties.getProperty("tableNamebPulse_bPulse_Invitation_Export");
+            this.jdbcUrl = properties.getProperty("jdbcUrl");
+            input.close();
         } catch (Exception e) {
             System.err.println("Error al leer el archivo de propiedades: " + e.getMessage());
             e.printStackTrace();
@@ -72,19 +58,23 @@ public class CsvToSqlServerBPulse_Invitation_Export {
                     String[] row;
                     while ((row = csvReader.readNext()) != null) {
                         setParameters(preparedStatement, row, headers.length);
-                        preparedStatement.executeUpdate();
-                        System.out.println("Row inserted successfully.");
+                        try {
+                            preparedStatement.executeUpdate();
+                            System.out.println("Row inserted successfully.");
+                        } catch (SQLException e) {
+                            logErrorRecord(row);
+                        }
                     }
                     System.out.println("Data successfully loaded into SQL Server.");
-                    if (preparedStatement != null)
-                        preparedStatement.close();
+                    preparedStatement.close();
                 } catch (Throwable throwable) {
-                    if (preparedStatement != null)
+                    if (preparedStatement != null) {
                         try {
                             preparedStatement.close();
                         } catch (Throwable throwable1) {
                             throwable.addSuppressed(throwable1);
                         }
+                    }
                     throw throwable;
                 }
                 csvReader.close();
@@ -98,25 +88,40 @@ public class CsvToSqlServerBPulse_Invitation_Export {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (FileNotFoundException error) {
-            error.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (connection != null)
+            if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    private void logErrorRecord(String[] values) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true))) {
+            for (String value : values) {
+                writer.write(value + ",");
+            }
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private String buildInsertionSql(String[] headers) {
         String sql = "INSERT INTO " + this.tableNamebPulse_bPulse_Invitation_Export + " VALUES (";
-        for (int i = 0; i < headers.length; i++)
-            sql = sql + ((i == 0) ? "?" : ", ?");
-        sql = sql + ")";
+        for (int i = 0; i < headers.length; i++) {
+            sql += (i == 0) ? "?" : ", ?";
+        }
+        sql += ")";
         return sql;
     }
 
@@ -125,15 +130,10 @@ public class CsvToSqlServerBPulse_Invitation_Export {
             if (i < values.length) {
                 preparedStatement.setString(i + 1, values[i]);
             } else {
-                preparedStatement.setNull(i + 1, 12);
+                preparedStatement.setNull(i + 1, Types.VARCHAR);
             }
         }
     }
-
-    private boolean isLastFieldNull(String[] row) {
-        return (row[row.length - 1] == null);
-    }
-
 
     public List<ConsultaResultado> realizarConsultas(LocalDate fechaConsulta) {
         List<ConsultaResultado> resultados = new ArrayList<>();
@@ -157,4 +157,3 @@ public class CsvToSqlServerBPulse_Invitation_Export {
         }
     }
 }
-
