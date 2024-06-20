@@ -25,7 +25,7 @@ public class CsvToSqlServerWPulseCallbacksExport {
     private String tableNamewPulse_Callbacks;
 
     private String errorFilePath;
-    private String logFilename ="WPulseCallbacksExport.log";
+    private String logFilename ="C:/data/WPulseCallbacksExport.log";
     public CsvToSqlServerWPulseCallbacksExport() {
         loadProperties();
     }

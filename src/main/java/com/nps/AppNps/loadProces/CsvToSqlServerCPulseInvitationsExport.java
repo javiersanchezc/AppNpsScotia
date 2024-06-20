@@ -25,7 +25,7 @@ public class CsvToSqlServerCPulseInvitationsExport {
     private String tableNamecPulse_Invitation_Export;
 
     private String errorFilePath;
-    private String logFilename ="CPulseInvitationsExport.log";
+    private String logFilename ="C:/data/CPulseInvitationsExport.log";
     public CsvToSqlServerCPulseInvitationsExport() {
         loadProperties();
     }

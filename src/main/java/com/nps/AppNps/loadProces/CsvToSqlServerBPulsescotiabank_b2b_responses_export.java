@@ -27,7 +27,7 @@ public class CsvToSqlServerBPulsescotiabank_b2b_responses_export {
     private String tableNamebPulse_bPulse_Response_Export;
 
     private String errorFilePath;
-    private String logFilename ="BPulsescotiabank_b2b_responses_export.log";
+    private String logFilename ="C:/data/BPulsescotiabank_b2b_responses_export.log";
 
     public CsvToSqlServerBPulsescotiabank_b2b_responses_export() {
         loadProperties();

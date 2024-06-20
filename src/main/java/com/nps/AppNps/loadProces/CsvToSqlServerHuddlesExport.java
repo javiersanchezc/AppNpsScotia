@@ -26,7 +26,7 @@ public class CsvToSqlServerHuddlesExport {
     private String tableNamehuddles_export;
 
     private String errorFilePath;
-    private String logFilename ="HuddlesExport.log";
+    private String logFilename ="C:/data/HuddlesExport.log";
     public CsvToSqlServerHuddlesExport() {
         loadProperties();
     }

@@ -20,7 +20,7 @@ public class CsvToSqlServerBPulse_digital_inline_export {
 
     private String tableNamebPulse_digital_inline_export;
 
-    private String logFilename = "BPulse_digital_inline_export.log";
+    private String logFilename = "C:/data/BPulse_digital_inline_export.log";
 
     public CsvToSqlServerBPulse_digital_inline_export() {
         loadProperties();

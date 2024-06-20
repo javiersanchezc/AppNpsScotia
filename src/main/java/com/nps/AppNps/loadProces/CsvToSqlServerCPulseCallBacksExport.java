@@ -25,7 +25,7 @@ public class CsvToSqlServerCPulseCallBacksExport {
     private String tableNamebPulseCallbacksExport;
 
     private String errorFilePath;
-    private String logFilename ="CPulseCallBacksExport.log";
+    private String logFilename ="C:/data/CPulseCallBacksExport.log";
 
     public CsvToSqlServerCPulseCallBacksExport() {
         loadProperties();

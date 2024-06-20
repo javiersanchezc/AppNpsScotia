@@ -26,7 +26,7 @@ public class CsvToSqlServerCsvToSqlServercPulseCardiffOptOutExport {
     private String tableNamecPulseInsuranceCardiffOptOutExport;
 
     private String errorFilePath;
-    private String logFilename ="cPulseCardiffOptOutExport.log";
+    private String logFilename ="C:/data/cPulseCardiffOptOutExport.log";
 
     public CsvToSqlServerCsvToSqlServercPulseCardiffOptOutExport() {
         loadProperties();

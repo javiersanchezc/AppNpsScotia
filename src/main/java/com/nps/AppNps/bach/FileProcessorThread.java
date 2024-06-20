@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 @Component
@@ -75,12 +77,26 @@ public class FileProcessorThread extends Thread {
     }
 
     private void moveFileToProcessedDirectory(Path filePath) {
-        // Move file to processed directory
+        // Move file to processed directory with timestamp
         try {
-            Path processedFilePath = Paths.get(processedDirectory, filePath.getFileName().toString());
+            // Get the current date and time
+            LocalDateTime now = LocalDateTime.now();
+            // Define a formatter to format the date and time
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            // Format the current date and time
+            String timestamp = now.format(formatter);
+            // Get the original file name
+            String originalFileName = filePath.getFileName().toString();
+            // Create a new file name with the timestamp
+            String newFileName = originalFileName + "_" + timestamp;
+            // Define the path for the processed file
+            Path processedFilePath = Paths.get(processedDirectory, newFileName);
+            // Move the file to the processed directory with the new name
             Files.move(filePath, processedFilePath, StandardCopyOption.REPLACE_EXISTING);
+            // Print a message indicating the file has been moved
             System.out.println("Moved file to processed directory: " + processedFilePath);
         } catch (IOException e) {
+            // Print the stack trace if an exception occurs
             e.printStackTrace();
         }
     }

@@ -26,7 +26,7 @@ public class CsvToSqlServerOptOutExport {
     private String tableNameOptout_Export;
 
     private String errorFilePath;
-    private String logFilename ="OptOutExport.log";
+    private String logFilename ="C:/data/OptOutExport.log";
 
     public CsvToSqlServerOptOutExport() {
         loadProperties();

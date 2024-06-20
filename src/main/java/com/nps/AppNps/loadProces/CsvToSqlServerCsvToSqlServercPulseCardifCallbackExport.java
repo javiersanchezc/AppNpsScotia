@@ -25,7 +25,7 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
     private String tableNamecPulseInsuranceCardifCallbackExport;
 
     private String errorFilePath;
-    private String logFilename ="cPulseCardifCallbackExport.log";
+    private String logFilename ="C:/data/cPulseCardifCallbackExport.log";
 
     public CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport() {
         loadProperties();

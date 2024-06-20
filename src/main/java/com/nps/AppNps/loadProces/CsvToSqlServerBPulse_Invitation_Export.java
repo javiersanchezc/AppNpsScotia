@@ -20,7 +20,7 @@ public class CsvToSqlServerBPulse_Invitation_Export {
 
     private String tableNamebPulse_bPulse_Invitation_Export;
 
-    private String logFilename = "BPulse_Invitation_Export.log";
+    private String logFilename = "C:/data/BPulse_Invitation_Export.log";
 
     public CsvToSqlServerBPulse_Invitation_Export() {
         loadProperties();

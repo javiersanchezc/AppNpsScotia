@@ -26,7 +26,7 @@ public class CsvToSqlServerBPulsescotiabank_b2b_callback {
 
     private String tableNamescotiabank_b2b_callback;
 
-    private String logFilename = "BPulsescotiabank_b2b_callback.log";
+    private String logFilename = "C:/data/BPulsescotiabank_b2b_callback.log";
 
     public CsvToSqlServerBPulsescotiabank_b2b_callback() {
         loadProperties();

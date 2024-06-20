@@ -25,7 +25,7 @@ public class CsvToSqlServerWPulse_Response_Export {
     private String tableNamewPulse_Response_Export;
 
     private String errorFilePath;
-    private String logFilename ="WPulse_Response_Export.log";
+    private String logFilename ="C:/data/WPulse_Response_Export.log";
 
     public CsvToSqlServerWPulse_Response_Export() {
         loadProperties();

@@ -25,7 +25,7 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifInvitationExport {
     private String tableNamecPulseInsuranceCardifInvitationExport;
 
     private String errorFilePath;
-    private String logFilename ="cPulseCardifInvitationExport.log";
+    private String logFilename ="C:/data/cPulseCardifInvitationExport.log";
 
     public CsvToSqlServerCsvToSqlServercPulseCardifInvitationExport() {
         loadProperties();
