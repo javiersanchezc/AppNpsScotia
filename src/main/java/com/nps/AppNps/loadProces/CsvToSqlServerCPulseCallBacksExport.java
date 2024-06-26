@@ -22,7 +22,7 @@ public class CsvToSqlServerCPulseCallBacksExport {
 
     private String inputFilePathwm_cPulse_callback_export;
 
-    private String tableNamebPulseCallbacksExport;
+    private String tableNamecPulse_Callbacks_Export;
 
     private String errorFilePath;
     private String logFilename ="C:/data/CPulseCallBacksExport.log";
@@ -44,7 +44,7 @@ public class CsvToSqlServerCPulseCallBacksExport {
                 }
                 properties.load(input);
                 this.inputFilePathwm_cPulse_callback_export = properties.getProperty("inputFilePathwm_cPulse_callback_export");
-                this.tableNamebPulseCallbacksExport = properties.getProperty("tableNamebPulseCallbacksExport");
+                this.tableNamecPulse_Callbacks_Export = properties.getProperty("tableNamecPulse_Callbacks_Export");
                 this.jdbcUrl = properties.getProperty("jdbcUrl");
                 this.errorFilePath = properties.getProperty("errorFilePath");
                 if (input != null)
@@ -77,7 +77,7 @@ public class CsvToSqlServerCPulseCallBacksExport {
                         String[] row;
                         while ((row = csvReader.readNext()) != null) {
                             try {
-                                setParameters(preparedStatement, row);
+                                setParameters(preparedStatement, headers, row);
                                 preparedStatement.executeUpdate();
                             } catch (SQLException e) {
                                 e.printStackTrace();
@@ -123,18 +123,43 @@ public class CsvToSqlServerCPulseCallBacksExport {
         }
     }
 
+
+
     private String buildInsertionSql(String[] headers) {
-        String sql = "INSERT INTO " + this.tableNamebPulseCallbacksExport + " VALUES (";
-        for (int i = 0; i < headers.length; i++)
+        String sql = "INSERT INTO " + this.tableNamecPulse_Callbacks_Export + " VALUES (";
+        for (int i = 0; i < headers.length; i++) {
             sql = sql + ((i == 0) ? "?" : ", ?");
+
+        }
         sql = sql + ")";
+
+        System.out.println("sql = " + sql);
         return sql;
     }
 
-    private void setParameters(PreparedStatement preparedStatement, String[] values) throws SQLException {
-        for (int i = 0; i < values.length; i++)
-            preparedStatement.setString(i + 1, values[i]);
+    private void setParameters(PreparedStatement preparedStatement, String[] headers, String[] values) throws SQLException {
+        // Si los valores son menores que los headers, completamos con nulls
+        String[] extendedValues = new String[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            if (i < values.length) {
+                extendedValues[i] = values[i];
+            } else {
+                extendedValues[i] = null;
+            }
+        }
+
+        for (int i = 0; i < extendedValues.length; i++) {
+            System.out.println("extendedValues[i] = " + extendedValues[i]);
+            System.out.println("i = " + i);
+            if (extendedValues[i] == null) {
+                preparedStatement.setNull(i + 1, java.sql.Types.VARCHAR);
+            } else {
+                preparedStatement.setString(i + 1, extendedValues[i]);
+            }
+        }
     }
+
+
 
     private void logErrorRecord(String[] values) {
         try {
@@ -160,7 +185,7 @@ public class CsvToSqlServerCPulseCallBacksExport {
     public List<ConsultaResultado> realizarConsultas(LocalDate fechaConsulta) {
         List<ConsultaResultado> resultados = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(jdbcUrl)) {
-            resultados.add(consultarTabla(connection, tableNamebPulseCallbacksExport, fechaConsulta));
+            resultados.add(consultarTabla(connection, tableNamecPulse_Callbacks_Export, fechaConsulta));
         } catch (SQLException e) {
             e.printStackTrace();
         }

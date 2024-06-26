@@ -1,6 +1,7 @@
 package com.nps.AppNps.controller;
 import com.nps.AppNps.service.IBPulseService;
 import com.nps.AppNps.service.ICPulseService;
+import com.opencsv.exceptions.CsvValidationException;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class CpulseController {
     }
 
     @GetMapping({"/cPulseCallback"})
-    public String getLoad_cPulseCallbacks_Export(@RequestParam(name = "inputFilePath", defaultValue = "C:/data/scotiabank_cpulse_callback_to_vm.csv") String inputFilePath, @RequestParam(name = "outputFilePath", defaultValue = "C:/data/scotiabank_cpulse_callback_to_vm_modified.csv") String outputFilePath) {
+    public String getLoad_cPulseCallbacks_Export(@RequestParam(name = "inputFilePath", defaultValue = "C:/data/scotiabank_cpulse_callback_to_vm.csv") String inputFilePath, @RequestParam(name = "outputFilePath", defaultValue = "C:/data/scotiabank_cpulse_callback_to_vm_modified.csv") String outputFilePath) throws CsvValidationException {
         this.service.Load_cPulse_Callback_Export(inputFilePath, outputFilePath);
         return "cPulse_Response_Export";
     }

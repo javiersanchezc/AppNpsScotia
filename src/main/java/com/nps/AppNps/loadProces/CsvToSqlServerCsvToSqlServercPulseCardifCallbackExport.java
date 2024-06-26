@@ -2,6 +2,7 @@ package com.nps.AppNps.loadProces;
 
 import com.nps.AppNps.Data.ConsultaResultado;
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 @Component
 public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
     private String jdbcUrl;
@@ -25,7 +27,7 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
     private String tableNamecPulseInsuranceCardifCallbackExport;
 
     private String errorFilePath;
-    private String logFilename ="C:/data/cPulseCardifCallbackExport.log";
+    private String logFilename = "C:/data/cPulseCardifCallbackExport.log";
 
     public CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport() {
         loadProperties();
@@ -35,29 +37,16 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
         Properties properties = new Properties();
         try {
             InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties");
-            try {
-                if (input == null) {
-                    System.err.println("No se pudo encontrar el archivo de propiedades.");
-                    if (input != null)
-                        input.close();
-                    return;
-                }
-                properties.load(input);
-                this.inputFilePathwm_cPulseInsuranceCardifCallbackExport = properties.getProperty("inputFilePathwm_cPulseInsuranceCardifCallbackExport");
-                this.tableNamecPulseInsuranceCardifCallbackExport = properties.getProperty("tableNamecPulseInsuranceCardifCallbackExport");
-                this.jdbcUrl = properties.getProperty("jdbcUrl");
-                this.errorFilePath = properties.getProperty("errorFilePath");
-                if (input != null)
-                    input.close();
-            } catch (Throwable throwable) {
-                if (input != null)
-                    try {
-                        input.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                throw throwable;
+            if (input == null) {
+                System.err.println("No se pudo encontrar el archivo de propiedades.");
+                return;
             }
+            properties.load(input);
+            this.inputFilePathwm_cPulseInsuranceCardifCallbackExport = properties.getProperty("inputFilePathwm_cPulseInsuranceCardifCallbackExport");
+            this.tableNamecPulseInsuranceCardifCallbackExport = properties.getProperty("tableNamecPulseInsuranceCardifCallbackExport");
+            this.jdbcUrl = properties.getProperty("jdbcUrl");
+            this.errorFilePath = properties.getProperty("errorFilePath");
+            input.close();
         } catch (Exception e) {
             System.err.println("Error al leer el archivo de propiedades: " + e.getMessage());
             e.printStackTrace();
@@ -65,63 +54,31 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
     }
 
     public void convertCsvToSqlServer() {
-        try {
-            Connection connection = DriverManager.getConnection(this.jdbcUrl);
-            try {
-                CSVReader csvReader = new CSVReader(new FileReader(this.inputFilePathwm_cPulseInsuranceCardifCallbackExport));
-                try {
-                    String[] headers = csvReader.readNext();
-                    String insertionSql = buildInsertionSql(headers);
-                    PreparedStatement preparedStatement = connection.prepareStatement(insertionSql);
-                    try {
-                        String[] row;
-                        while ((row = csvReader.readNext()) != null) {
-                            try {
-                                setParameters(preparedStatement, row);
-                                preparedStatement.executeUpdate();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                                logErrorRecord(row);
-                            }
+        try (Connection connection = DriverManager.getConnection(this.jdbcUrl)) {
+            try (CSVReader csvReader = new CSVReader(new FileReader(this.inputFilePathwm_cPulseInsuranceCardifCallbackExport))) {
+                String[] headers = csvReader.readNext();
+                String insertionSql = buildInsertionSql(headers);
+                System.out.println("insertionSql = " + insertionSql);
+                try (PreparedStatement preparedStatement = connection.prepareStatement(insertionSql)) {
+                    String[] row;
+                    while ((row = csvReader.readNext()) != null) {
+                        try {
+                            setParameters(preparedStatement, row);
+                            System.out.println(buildFullSql(insertionSql, row)); // Aquí imprimimos la sentencia SQL con los valores
+                            preparedStatement.executeUpdate();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            logErrorRecord(row);
                         }
-                        System.out.println("Data successfully loaded into SQL Server.");
-                        if (preparedStatement != null)
-                            preparedStatement.close();
-                    } catch (Throwable throwable) {
-                        if (preparedStatement != null)
-                            try {
-                                preparedStatement.close();
-                            } catch (Throwable throwable1) {
-                                throwable.addSuppressed(throwable1);
-                            }
-                        throw throwable;
                     }
-                    csvReader.close();
-                } catch (Throwable throwable) {
-                    try {
-                        csvReader.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                    throw throwable;
+                    System.out.println("Data successfully loaded into SQL Server.");
                 }
-                if (connection != null)
-                    connection.close();
-            } catch (Throwable throwable) {
-                if (connection != null)
-                    try {
-                        connection.close();
-                    } catch (Throwable throwable1) {
-                        throwable.addSuppressed(throwable1);
-                    }
-                throw throwable;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (CsvValidationException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException error) {
-            error.printStackTrace();
-            System.out.println("------------" + error);
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -131,30 +88,43 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
         for (int i = 0; i < headers.length; i++)
             sql = sql + ((i == 0) ? "?" : ", ?");
         sql = sql + ")";
+        System.out.println(sql);
         return sql;
     }
 
     private void setParameters(PreparedStatement preparedStatement, String[] values) throws SQLException {
-        for (int i = 0; i < values.length; i++)
-            preparedStatement.setString(i + 1, values[i]);
+        
+        for (int i = 0; i < values.length; i++) {
+            System.out.println("values[i] = " + values[i]);
+            if (values[i] == null || values[i].isEmpty()) {
+                preparedStatement.setNull(i + 1, Types.NULL);
+            } else {
+                preparedStatement.setString(i + 1, values[i]);
+            }
+        }
+    }
+
+    private String buildFullSql(String insertionSql, String[] values) {
+        StringBuilder sql = new StringBuilder(insertionSql);
+        for (String value : values) {
+            int index = sql.indexOf("?");
+            if (index != -1) {
+                if (value == null || value.isEmpty()) {
+                    sql.replace(index, index + 1, "NULL");
+                } else {
+                    sql.replace(index, index + 1, "'" + value + "'");
+                }
+            }
+        }
+        return sql.toString();
     }
 
     private void logErrorRecord(String[] values) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
-            try {
-                for (String value : values)
-                    writer.write(value + ",");
-                writer.newLine();
-                writer.close();
-            } catch (Throwable throwable) {
-                try {
-                    writer.close();
-                } catch (Throwable throwable1) {
-                    throwable.addSuppressed(throwable1);
-                }
-                throw throwable;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true))) {
+            for (String value : values) {
+                writer.write(value + ",");
             }
+            writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,4 +152,3 @@ public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
         }
     }
 }
-

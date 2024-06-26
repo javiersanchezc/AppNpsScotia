@@ -124,16 +124,22 @@ public class CsvToSqlServerCPulseResponseExport {
     }
 
     private String buildInsertionSql(String[] headers) {
-        String sql = "INSERT INTO " + this.tableNamecPulse_response_export + " VALUES (";
-        for (int i = 0; i < headers.length; i++)
-            sql = sql + ((i == 0) ? "?" : ", ?");
-        sql = sql + ")";
-        return sql;
+        StringBuilder sql = new StringBuilder("INSERT INTO ").append(this.tableNamecPulse_response_export).append(" VALUES (");
+        for (int i = 0; i < headers.length; i++) {
+            sql.append(i == 0 ? "?" : ", ?");
+        }
+        sql.append(")");
+        return sql.toString();
     }
 
     private void setParameters(PreparedStatement preparedStatement, String[] values) throws SQLException {
-        for (int i = 0; i < values.length; i++)
+        if (preparedStatement == null || values == null) {
+            throw new IllegalArgumentException("PreparedStatement and values must not be null");
+        }
+
+        for (int i = 0; i < values.length; i++) {
             preparedStatement.setString(i + 1, values[i]);
+        }
     }
 
     private void logErrorRecord(String[] values) {

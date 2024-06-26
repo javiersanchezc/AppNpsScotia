@@ -8,7 +8,7 @@
 /*    */ 
 /*    */ public class ProcesadorDatos {
 /*    */   public static void main(String[] args) {
-/*  9 */     String rutaArchivo = "C:/data/cpulsecabecerasinvitations.txt";
+/*  9 */     String rutaArchivo = "C:/data/callllbaackcabecera.txt";
 /*    */     try {
 /* 12 */       String datosEnUnaFila = procesarArchivo(rutaArchivo);
 /* 13 */       System.out.println(datosEnUnaFila);

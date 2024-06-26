@@ -22,7 +22,7 @@ public class OptOutController {
     }
 
     @GetMapping({"/OutExport"})
-    public String getLoadOutExport(@RequestParam(name = "inputFilePath", defaultValue = "C:/data/scotiabank_optout_to_vm.csv") String inputFilePath, @RequestParam(name = "outputFilePath", defaultValue = "C:/data/sscotiabank_optout_to_vm_modified.csv") String outputFilePath) {
+    public String getLoadOutExport(@RequestParam(name = "inputFilePath", defaultValue = "C:/data/scotiabank_optout_to_vm.csv") String inputFilePath, @RequestParam(name = "outputFilePath", defaultValue = "C:/data/scotiabank_optout_to_vm_modified.csv") String outputFilePath) {
         this.service.LoadScotiabankOutExport(inputFilePath, outputFilePath);
         return "OutExport";
     }

@@ -1,6 +1,7 @@
 package com.nps.AppNps.bach;
 
 import com.nps.AppNps.service.*;
+import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class DataLoader {
         this.BPulseservice = BPulseservice;
     }
 
-    public void loadAllData() {
+    public void loadAllData() throws CsvValidationException {
         service.loadMasive();
         serviceOut.loadMasive();
         Huddleservice.loadMasive();
