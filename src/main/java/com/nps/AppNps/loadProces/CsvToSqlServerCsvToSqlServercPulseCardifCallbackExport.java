@@ -22,12 +22,13 @@ import java.util.Properties;
 public class CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport {
     private String jdbcUrl;
 
-    private String inputFilePathwm_cPulseInsuranceCardifCallbackExport;
+    private String inputFilePathwm_cPulseInsuranceCardifCallbackExport; //recibirlo por parametro
 
-    private String tableNamecPulseInsuranceCardifCallbackExport;
+    private String tableNamecPulseInsuranceCardifCallbackExport;//como recibirlo por parametro
 
     private String errorFilePath;
-    private String logFilename = "C:/data/cPulseCardifCallbackExport.log";
+    private String logFilename = "C:/data/cPulseCardifCallbackExport.log"; //como recibirlo por parametro
+
 
     public CsvToSqlServerCsvToSqlServercPulseCardifCallbackExport() {
         loadProperties();
