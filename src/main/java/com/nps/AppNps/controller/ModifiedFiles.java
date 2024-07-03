@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping({"/api"})
 @CrossOrigin(origins = "*")
@@ -17,8 +15,8 @@ public class ModifiedFiles {
         this.service = service;
     }
 
-    @GetMapping("/GetFiles")
-    public ResponseEntity<String> getFileContent(@RequestParam String fileName) {
+    @GetMapping("/GetFiles/{fileName}")
+    public ResponseEntity<String> getFileContent(@PathVariable String fileName) {
         try {
             String fileContent = service.getFiles(fileName);
             System.out.println("file = " + fileName);

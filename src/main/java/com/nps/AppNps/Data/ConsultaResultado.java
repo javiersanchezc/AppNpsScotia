@@ -1,6 +1,5 @@
 package com.nps.AppNps.Data;
 
-
 import java.time.LocalDateTime;
 
 public class ConsultaResultado {

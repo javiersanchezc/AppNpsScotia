@@ -37,22 +37,25 @@ public class loadAllServiceData {
     }
 
     public List<ConsultaResultado> realizarConsultas(LocalDate fechaConsulta) {
+        System.out.println("fechaConsulta = " + fechaConsulta);
         List<ConsultaResultado> resultados = new ArrayList<>();
         String sql = "SELECT Tabla AS nombreTabla, SUM(CantidadRegistros) AS cantidadDatos " +
                 "FROM RegistroNPSInserciones " +
                 "WHERE CAST(Fecha AS DATE) = ? " +
                 "GROUP BY Tabla";
-
+        System.out.println("sql = " + sql);
         try (Connection connection = DriverManager.getConnection(jdbcUrl);
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setDate(1, java.sql.Date.valueOf(fechaConsulta));
+            // Convertir LocalDate a java.sql.Date
+            preparedStatement.setDate(1, Date.valueOf(fechaConsulta));
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     String nombreTabla = resultSet.getString("nombreTabla");
                     long cantidadDatos = resultSet.getLong("cantidadDatos");
-                    ConsultaResultado resultado = new ConsultaResultado(LocalDateTime.now(), nombreTabla, cantidadDatos);
+                    LocalDateTime fechaConsultaDateTime = fechaConsulta.atStartOfDay(); // Convertir LocalDate a LocalDateTime
+                    ConsultaResultado resultado = new ConsultaResultado(fechaConsultaDateTime, nombreTabla, cantidadDatos);
                     resultados.add(resultado);
                 }
             }
@@ -62,4 +65,5 @@ public class loadAllServiceData {
 
         return resultados;
     }
+
 }

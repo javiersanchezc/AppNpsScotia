@@ -2,9 +2,10 @@ package com.nps.AppNps.controller;
 
 
 import com.nps.AppNps.service.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 @RestController
 @RequestMapping({"/api"})
@@ -31,19 +32,32 @@ public class BatchController {
     }
 
     @GetMapping("/loadData")
-    public ResponseEntity<String> getLoad_BPulse_digital_inline_export() {
-        try {
-            service.loadMasive();
-            serviceOut.loadMasive();
-            Huddleservice.loadMasive();
-            CPulseservice.loadMasive();
-            Cardifservice.loadMasive();
-            BPulseservice.loadMasive();
-            return ResponseEntity.ok("Datos cargados exitosamente.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al cargar los datos.");
-        }
-    }
+    public void getLoad_BPulse_digital_inline_export() {
+        // Ruta al archivo .bat
+        String scriptPath = "C:\\data\\correAPIS.bat";
 
+        try {
+            // Crear un proceso para ejecutar el script .bat
+            ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", scriptPath);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            // Leer la salida del script
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            // Esperar a que el proceso termine y obtener el código de salida
+            int exitCode = process.waitFor();
+            System.out.println("El script terminó con el código de salida: " + exitCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
 
 }
