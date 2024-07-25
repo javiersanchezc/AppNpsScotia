@@ -45,7 +45,7 @@ public class CSV {
             char c = input.charAt(i);
             if (c == '"') {
                 insideQuotes = !insideQuotes;
-            } else if (insideQuotes && c == ',') {
+            } else if (insideQuotes && c == '|') {
                 result.append('.');
             } else if (c != '"') {
                 result.append(c);

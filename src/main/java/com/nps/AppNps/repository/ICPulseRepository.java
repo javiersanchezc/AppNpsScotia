@@ -1,8 +1,8 @@
-package com.nps.AppNps.service;
+package com.nps.AppNps.repository;
 
 import com.opencsv.exceptions.CsvValidationException;
 
-public interface ICPulseService {
+public interface ICPulseRepository {
     void Load_cPulse_Callback_Export(String paramString1, String paramString2) throws CsvValidationException;
 
     void Load_cPulse_Response_Export(String paramString1, String paramString2);

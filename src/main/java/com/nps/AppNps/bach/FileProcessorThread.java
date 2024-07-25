@@ -1,6 +1,6 @@
 package com.nps.AppNps.bach;
 
-import com.nps.AppNps.service.ITrasformfiles;
+import com.nps.AppNps.repository.ITrasformfilesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 public class FileProcessorThread extends Thread {
     private final String inputDirectory;
     private final String processedDirectory;
-    private final ITrasformfiles trasformService;
+    private final ITrasformfilesRepository trasformService;
     private final DataLoader dataLoader;
 
     @Autowired
-    public FileProcessorThread(ITrasformfiles trasformService, DataLoader dataLoader) {
+    public FileProcessorThread(ITrasformfilesRepository trasformService, DataLoader dataLoader) {
         this.inputDirectory = "C:/data";
         this.processedDirectory = "C:/data/bkdestino";
         this.trasformService = trasformService;

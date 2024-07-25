@@ -1,6 +1,6 @@
-package com.nps.AppNps.service;
+package com.nps.AppNps.repository;
 
-public interface IBPulseService {
+public interface IBPulseRepository {
     void Load_BPulse_digital_inline_export(String paramString1, String paramString2);
 
     void Load_bPulse_Invitation_Export(String paramString1, String paramString2);

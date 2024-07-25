@@ -1,23 +1,15 @@
 package com.nps.AppNps.controller;
-import com.nps.AppNps.service.IBPulseService;
-import com.nps.AppNps.service.ICardifService;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import com.nps.AppNps.repository.ICardifRepository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
 
 @RestController
 @RequestMapping({"/api"})
 @CrossOrigin(origins = "*")
 public class CardifController {
 
-    private final ICardifService service;
+    private final ICardifRepository service;
 
-    public CardifController(ICardifService service) {
+    public CardifController(ICardifRepository service) {
         this.service = service;
     }
 

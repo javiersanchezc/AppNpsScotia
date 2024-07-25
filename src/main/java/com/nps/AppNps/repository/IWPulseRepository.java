@@ -1,6 +1,6 @@
-package com.nps.AppNps.service;
+package com.nps.AppNps.repository;
 
-public interface IWPulseService {
+public interface IWPulseRepository {
     void Load_wPulse_Invitation_Export();
 
     void Load_wPulse_Callbacks_Export();

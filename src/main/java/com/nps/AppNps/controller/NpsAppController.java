@@ -1,26 +1,18 @@
 package com.nps.AppNps.controller;
-import com.nps.AppNps.service.IBPulseService;
-import com.nps.AppNps.service.INPSService;
-import com.nps.AppNps.service.IWPulseService;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import com.nps.AppNps.repository.INPSRepository;
+import com.nps.AppNps.repository.IWPulseRepository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
 
 @RestController
 @RequestMapping({"/api"})
 @CrossOrigin(origins = "*")
 public class NpsAppController {
 
-    private final INPSService service;
+    private final INPSRepository service;
 
-    private final IWPulseService servicew;
+    private final IWPulseRepository servicew;
 
-    public NpsAppController(INPSService service, IWPulseService servicew) {
+    public NpsAppController(INPSRepository service, IWPulseRepository servicew) {
         this.service = service;
         this.servicew = servicew;
     }

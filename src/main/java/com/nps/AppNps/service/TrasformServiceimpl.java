@@ -1,10 +1,11 @@
 package com.nps.AppNps.service;
 
 import com.nps.AppNps.loadProces.CSV;
+import com.nps.AppNps.repository.ITrasformfilesRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TrasformServiceimpl implements ITrasformfiles {
+public class TrasformServiceimpl implements ITrasformfilesRepository {
 
     @Override
     public String getFiles(String fileName) {

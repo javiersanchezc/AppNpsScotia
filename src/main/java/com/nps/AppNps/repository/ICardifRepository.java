@@ -1,6 +1,6 @@
-package com.nps.AppNps.service;
+package com.nps.AppNps.repository;
 
-public interface ICardifService {
+public interface ICardifRepository {
     void Load_cPulse_Insurance_Cardif_OptOut_Export(String paramString1, String paramString2);
 
     void Load_cPulse_Insurance_Cardif_Invitations_Export(String paramString1, String paramString2);

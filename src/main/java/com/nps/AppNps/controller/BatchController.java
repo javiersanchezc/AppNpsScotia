@@ -1,7 +1,7 @@
 package com.nps.AppNps.controller;
 
 
-import com.nps.AppNps.service.*;
+import com.nps.AppNps.repository.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -13,15 +13,15 @@ import java.io.InputStreamReader;
 
 public class BatchController {
 
-    private final IBPulseService service;
-    private final IOptOutService serviceOut;
-    private final INPSService    INPSservice;
-    private final IHuddlesService Huddleservice;
-    private final ICPulseService CPulseservice;
-    private final ICardifService Cardifservice;
-    private final IBPulseService BPulseservice;
+    private final IBPulseRepository service;
+    private final IOptOutRepository serviceOut;
+    private final INPSRepository INPSservice;
+    private final IHuddlesRepository Huddleservice;
+    private final ICPulseRepository CPulseservice;
+    private final ICardifRepository Cardifservice;
+    private final IBPulseRepository BPulseservice;
 
-    public BatchController(IBPulseService service, IOptOutService serviceOut, INPSService inpSservice, IHuddlesService huddleservice, ICPulseService cPulseservice, ICardifService cardifservice, IBPulseService bPulseservice) {
+    public BatchController(IBPulseRepository service, IOptOutRepository serviceOut, INPSRepository inpSservice, IHuddlesRepository huddleservice, ICPulseRepository cPulseservice, ICardifRepository cardifservice, IBPulseRepository bPulseservice) {
         this.service = service;
         this.serviceOut = serviceOut;
         this.INPSservice = inpSservice;

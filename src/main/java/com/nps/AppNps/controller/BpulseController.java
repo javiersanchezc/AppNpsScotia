@@ -1,7 +1,7 @@
 package com.nps.AppNps.controller;
 
 
-import com.nps.AppNps.service.IBPulseService;
+import com.nps.AppNps.repository.IBPulseRepository;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class BpulseController {
 
         return restTemplate;
     }
-    private final IBPulseService service;
+    private final IBPulseRepository service;
 
-    public BpulseController(IBPulseService service) {
+    public BpulseController(IBPulseRepository service) {
         this.service = service;
     }
 

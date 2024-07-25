@@ -1,23 +1,15 @@
 package com.nps.AppNps.controller;
-import com.nps.AppNps.service.IBPulseService;
-import com.nps.AppNps.service.IHuddlesService;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import com.nps.AppNps.repository.IHuddlesRepository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
 
 @RestController
 @RequestMapping({"/api"})
 @CrossOrigin(origins = "*")
 public class HuddlesController {
 
-    private final IHuddlesService service;
+    private final IHuddlesRepository service;
 
-    public HuddlesController(IHuddlesService service) {
+    public HuddlesController(IHuddlesRepository service) {
         this.service = service;
     }
 

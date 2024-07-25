@@ -1,6 +1,6 @@
 package com.nps.AppNps.controller;
 
-import com.nps.AppNps.service.ITrasformfiles;
+import com.nps.AppNps.repository.ITrasformfilesRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping({"/api"})
 @CrossOrigin(origins = "*")
 public class ModifiedFiles {
-    private final ITrasformfiles service;
+    private final ITrasformfilesRepository service;
 
-    public ModifiedFiles(ITrasformfiles service) {
+    public ModifiedFiles(ITrasformfilesRepository service) {
         this.service = service;
     }
 

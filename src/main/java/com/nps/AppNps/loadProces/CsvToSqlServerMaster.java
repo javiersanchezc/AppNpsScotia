@@ -2,7 +2,10 @@ package com.nps.AppNps.loadProces;
 
 import com.nps.AppNps.Data.ConsultaResultado;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -18,6 +21,8 @@ import java.util.List;
 
 public class CsvToSqlServerMaster {
 
+    private static final Logger logger = LoggerFactory.getLogger(CsvToSqlServerMaster.class);
+
     private String jdbcUrl;
     private String inputFilePath;
     private String tableName;
@@ -31,58 +36,48 @@ public class CsvToSqlServerMaster {
         this.errorFilePath = errorFilePath;
         this.logFilename = logFilename;
     }
+
     public void convertCsvToSqlServer() {
-        try {
-            if (!Files.exists(Paths.get(this.inputFilePath))) {
-                System.err.println("El archivo no existe: " + this.inputFilePath);
+        if (!Files.exists(Paths.get(this.inputFilePath))) {
+            logger.error("El archivo no existe: {}", this.inputFilePath);
+            return;
+        }
+
+        try (Connection connection = DriverManager.getConnection(this.jdbcUrl);
+             CSVReader csvReader = new CSVReaderBuilder(new FileReader(this.inputFilePath))
+                     .withCSVParser(new com.opencsv.CSVParserBuilder().withSeparator('|').build())
+                     .build()) {
+
+            String[] headers = csvReader.readNext();
+            if (headers == null) {
+                logger.error("Error: Los encabezados están vacíos o son nulos.");
                 return;
             }
 
-            Connection connection = DriverManager.getConnection(this.jdbcUrl);
-            try (CSVReader csvReader = new CSVReader(new FileReader(this.inputFilePath))) {
-                String[] headers = csvReader.readNext();
-                String insertionSql = buildInsertionSql(headers);
-                PreparedStatement preparedStatement = connection.prepareStatement(insertionSql);
+            String insertionSql = buildInsertionSql(headers);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertionSql)) {
                 String[] row;
+                int lineNumber = 0;
 
                 while ((row = csvReader.readNext()) != null) {
+                    lineNumber++;
                     try {
                         setParameters(preparedStatement, headers, row);
-                        System.out.println("Executing: " + preparedStatement.toString());
+                        logger.debug("Executing: {}", preparedStatement.toString());
                         preparedStatement.executeUpdate();
-
                     } catch (SQLException e) {
-                        e.printStackTrace();
-                        System.out.println("e1 = -------" + e);
-                        logErrorRecord(row);
-
+                        logger.error("Error en la línea {}: {}", lineNumber, e.getMessage());
+                        logErrorRecord(row, lineNumber);
                     }
                 }
-                System.out.println("Data successfully loaded into SQL Server.");
-                preparedStatement.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("e2 = -------" + e);
-            } finally {
-                if (connection != null) {
-                    connection.close();
-                }
+                logger.info("Data successfully loaded into SQL Server.");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("e3 = -------" + e);
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            System.out.println("e4 = --------- " + e);
+        } catch (IOException | SQLException | CsvValidationException e) {
+            logger.error("Error al convertir CSV a SQL Server: ", e);
         }
     }
-    private String buildInsertionSql(String[] headers) {
-        if (headers == null || headers.length == 0) {
-            System.err.println("Error: Los encabezados están vacíos o son nulos.");
-            return null;
-        }
 
+    private String buildInsertionSql(String[] headers) {
         StringBuilder sql = new StringBuilder("INSERT INTO " + this.tableName + " VALUES (");
         for (int i = 0; i < headers.length; i++) {
             sql.append((i == 0) ? "?" : ", ?");
@@ -92,7 +87,6 @@ public class CsvToSqlServerMaster {
     }
 
     private void setParameters(PreparedStatement preparedStatement, String[] headers, String[] values) throws SQLException {
-        // Si los valores son menores que los headers, completamos con nulls
         String[] extendedValues = new String[headers.length];
         for (int i = 0; i < headers.length; i++) {
             if (i < values.length) {
@@ -110,38 +104,32 @@ public class CsvToSqlServerMaster {
             }
         }
     }
-    private void logErrorRecord(String[] values) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true));
-            try {
-                for (String value : values)
-                    writer.write(value + ",");
-                writer.newLine();
-                writer.close();
-            } catch (Throwable throwable) {
-                try {
-                    writer.close();
-                } catch (Throwable throwable1) {
-                    throwable.addSuppressed(throwable1);
-                }
-                throw throwable;
+
+    private void logErrorRecord(String[] values, int lineNumber) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilename, true))) {
+            writer.write("Line " + lineNumber + ": ");
+            for (String value : values) {
+                writer.write(value + "|");
             }
+            writer.newLine();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error al escribir en el archivo de log de errores: ", e);
         }
     }
-    public List<com.nps.AppNps.Data.ConsultaResultado> realizarConsultas(LocalDate fechaConsulta) {
-        List<com.nps.AppNps.Data.ConsultaResultado> resultados = new ArrayList<>();
+
+    public List<ConsultaResultado> realizarConsultas(LocalDate fechaConsulta) {
+        List<ConsultaResultado> resultados = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(jdbcUrl)) {
             resultados.add(consultarTabla(connection, tableName, fechaConsulta));
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error realizando consultas: ", e);
         }
         return resultados;
     }
-    private com.nps.AppNps.Data.ConsultaResultado consultarTabla(Connection connection, String tableName, LocalDate fechaConsulta) throws SQLException {
+
+    private ConsultaResultado consultarTabla(Connection connection, String tableName, LocalDate fechaConsulta) throws SQLException {
         String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE Response_Date_EST = ?";
-        System.out.println("sql = " + sql);
+        logger.debug("sql = {}", sql);
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setDate(1, java.sql.Date.valueOf(fechaConsulta));
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
