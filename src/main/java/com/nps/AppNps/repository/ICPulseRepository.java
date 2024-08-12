@@ -9,4 +9,6 @@ public interface ICPulseRepository {
 
     void Load_cPulse_Invitation_Export(String paramString1, String paramString2);
     void loadMasive() throws CsvValidationException;
+
+    void Load_cPulse_inlineResponse_Export(String inputFilePath, String outputFilePath);
 }

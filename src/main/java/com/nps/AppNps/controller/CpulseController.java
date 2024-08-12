@@ -31,4 +31,10 @@ public class CpulseController {
         this.service.Load_cPulse_Callback_Export(inputFilePath, outputFilePath);
         return "cPulse_Response_Export";
     }
+
+    @GetMapping({"/cPulseinlineResponse"})
+    public String getLoad_cPulse_inlineResponse_Export(@RequestParam(name = "inputFilePath", defaultValue = "C:/data/sb_cpulse_digital_inline_responses_to_vm.csv") String inputFilePath, @RequestParam(name = "outputFilePath", defaultValue = "C:/data/sb_cpulse_digital_inline_responses_to_vm_modified.csv") String outputFilePath) {
+        this.service.Load_cPulse_inlineResponse_Export(inputFilePath, outputFilePath);
+        return "cPulse_Response_Export";
+    }
 }

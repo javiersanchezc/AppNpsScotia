@@ -20,7 +20,8 @@ public class CPulseServiceimpl implements ICPulseRepository {
     @Value("${inputFilePathwm_cPulse_Invitation_Export}")
     private String inputFilePathwm_cPulse_Invitation_Export;
 
-
+    @Value("${inputFilePathwm_cPulse_inlineResponse_export}")
+    private String inputFilePathwm_cPulse_inlineResponse_export;
 
     @Value("${tableNamecPulse_Callbacks_Export}")
     private String tableNamecPulse_Callbacks_Export;
@@ -30,6 +31,10 @@ public class CPulseServiceimpl implements ICPulseRepository {
 
     @Value("${tableNamecPulse_Invitation_Export}")
     private String tableNamecPulse_Invitation_Export;
+
+    @Value("${tableNamecPulse_inlineresponse_export}")
+    private String tableNamecPulse_inlineresponse_export;
+
 
     @Value("${errorFilePath}")
     private String errorFilePath;
@@ -70,6 +75,17 @@ public class CPulseServiceimpl implements ICPulseRepository {
 
         CsvToSqlServerCPulseCallBacksExport CPulseCallBacksExport = new CsvToSqlServerCPulseCallBacksExport();
         CPulseCallBacksExport.convertCsvToSqlServer();
+    }
+
+    @Override
+    public void Load_cPulse_inlineResponse_Export(String inputFilePath, String outputFilePath) {
+        String headerFileout = "Digital_Form|Digital_Form_Name|First_name|Last_name|Customer_Full_Name|Property_name|Property_identifier|Email|Gender|Activity_Description|Activity_ID|Agent_ID|Business_Phone|Category|Channel_Code|Contact_Method|Country|Customer_ID|Survey_viewed_on_mobile_device_on_any_page|All_Segments|Home_Phone|Home_Phone2|Interaction_Date|Mobile_Phone|Customer_Preferred_Language|Product_Code|Product_Description|Product_Feature_Description|Product_Feature_ID|Product_ID|Reference_ID|Salutation|Status_Description|Status_ID|Survey_Method|Channel|Transit_ID|Transit_Name|Response_Date_EST|Invitation_Date_EST|Likelihood_to_Recommend|Always_On_OSAT|Impact_of_Recent_Interaction|Visit_Reason|Complete_Purpose|LTR_Comment|Visit_Reason_Comment|Complete_Purpose_Comment|Improvement_Comment|Recent_Interaction_Impact_Reason_Comment|Translations_Complete_Purpose_Comment|Translations_Improvement_Comment|Translations_LTR_Comment|Translations_Recent_Interaction_Impact_Comment|Translations_Visit_Reason_Other_Comment|Transaction_Intercept_Ease_of_Task|Transaction_Intercept_Ease_of_Task_Comment|Contact_Status|Closure_Status|Outcome|Outcome_Note|Resolution|Resolution_Note|Customer_Experience_Triggers|Customer_Experience_Triggers_Note|Customer_Reached|Customer_Issue_Escalated|Customer_Issue_Pending|Customer_Suggestions|Coaching_Comments|Additional_Comments|Follow_up_Actions|Current_status_of_alert|All_log_notes_combined_if_any|Alert_close_time|Alert_closed_by|Alert_description|Alert_reopened|Interaction_Date_Timestamp|Number_of_callbacks_attempted|Team_Member|Team_Owner_CCC|Team_Owner_Digital|Callback_Form_Updated|Rapid_Response_Sent|Site_Name|Team_Name|Customer_Issue_Raised|Customer_Suggestions_Follow_up_Actions_Additional_Comments|Branch_Roles|Customer_Country|App_ID_Mobile|App_Version_Mobile|Browser|Browser_Language|Browser_Version|City|ClickTale_Session_URL|Country2|Country_Code|Decibel_Insight_Session_URL|Device|Device_ID_Mobile|Device_Marketing_Name|Device_Model|Device_Model_Mobile|Device_Vendor|Digital_Program|Form_ID|IP_Address|Is_Mobile_Device|Is_Mobile_Phone|Is_Tablet|Language_Locale|Operating_System|Origin_Type|OS_Type_Mobile|OS_Version|OS_Version_Mobile|Region|Response_ID|Screen_Capture_URL|Screen_Resolution|SDK_Version_Mobile|Trigger_Type|URL|Usable_Screen_Resolution|UUID|Transaction_Types|Surveyid|Retail_Everyday_Banking_Journey_Step|Retail_Help_Advice_Journey_Step|Retail_Journey|Retail_New_Product_Sign_up_Journey_Step|Retail_Product_Renewal_Journey_Step|Agent_ID2|Credit_Card_Payment_OK|Customer_First_Name_Digital|Custom_User_Hashed_Rut|Customer_Last_Name_Digital|Loan_Payment_OK|Public_Service_Payment_OK|Recharge_OK|Statements_OK|Transfer_OK|WebtrackID|Channel2|Digital_Improvement_Category|Interaction_Date2|Always_On_Time_Occured|Always_On_OSAT_5_Scale|Always_On_Complete_Purpose|Always_On_OSAT2|Behavioral_Intercept_OSAT|General_Intercept_Visit_Abandonment_Reason|General_Intercept_OSAT|General_Intercept_OSAT_Comment|General_Intercept_Visit_Reason|Did_you_enjoy_your_Advice_experience|What_did_you_enjoy_about_the_Advice_experience|Always_On_Feature_Comment|Always_On_Banking_Features|Always_On_Features_Other_Comment|Always_On_General_Comment|Always_On_Incident_Comment|Always_On_Incidents_Other_Comment|Always_On_OSAT_Comment|Always_On_Visit_Reason_Other_Comment|Always_On_Category|Always_On_Category_Payment|Always_On_Client_Sign_Up|Always_On_Category_New_Product|Always_On_Category_Product_Inquiry|Always_On_Category_Settings|Always_On_Category_Transfers|Video_Feedback_for_Exceptional_Comment|Living_Lens_Feedback_type|Audio_Feedback_for_Why_Comment|Video_Feedback_for_Why_Comment";
+
+        CSV csvTransformer = new CSV(inputFilePath, outputFilePath, headerFileout);
+        csvTransformer.transformCsv();
+        String fileLog = "C:/data/"+"cPulse_inlineResponse_Export.log";
+        CsvToSqlServerMaster CPulseinlineresponsesExport = new CsvToSqlServerMaster(jdbcUrl, inputFilePathwm_cPulse_inlineResponse_export, tableNamecPulse_inlineresponse_export, errorFilePath, fileLog);
+        CPulseinlineresponsesExport.convertCsvToSqlServer();
     }
 
     public void Load_cPulse_Callback_Export(String inputFilePath, String outputFilePath) throws CsvValidationException {
